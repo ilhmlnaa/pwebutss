@@ -3,17 +3,19 @@ import { useLocation } from "react-router-dom";
 import { getMhsbyNpm } from "../utils/Api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTableCellsLarge, faList } from "@fortawesome/free-solid-svg-icons";
+import { updateMhs } from "../utils/Api";
 import CardMhs from "../components/CardMhs";
 import TableMhs from "../components/TableMhs";
-import { TableMhsLoader } from "../components/SkeletonLoader";
 import ModalsEdit from "../components/ModalEdit";
+import { TableMhsLoaderStatus } from "../components/SkeletonLoader";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const Search = () => {
   const [searchResults, setSearchResults] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [view, setView] = useState("table");
   const [msg, setMsg] = useState("");
+  const [mhs, setMhs] = useState([]);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     npm: "",
@@ -22,11 +24,17 @@ const Search = () => {
     no_hp: "",
     alamat: "",
     picture: "",
+    status: "",
   });
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const npmQuery = queryParams.get("npm");
   const navigate = useNavigate();
+
+  const [loadingState, setLoadingState] = useState({
+    edit: false,
+    load: true,
+  });
 
   useEffect(() => {
     if (npmQuery) {
@@ -38,12 +46,12 @@ const Search = () => {
             setMsg("No data found");
             setSearchResults([]);
           }
-          setLoading(false);
+          setLoadingState((prevState) => ({ ...prevState, load: false }));
         })
         .catch((error) => {
           console.error(error);
-          setLoading(false);
-          setMsg("Error fetching data");
+          setLoadingState((prevState) => ({ ...prevState, load: false }));
+          setSearchResults([error.response.data]);
         });
     }
   }, [npmQuery]);
@@ -85,35 +93,61 @@ const Search = () => {
       no_hp: formData.no_hp,
       alamat: formData.alamat,
       picture: formData.picture,
+      status: formData.status,
     };
 
     try {
-      setLoading(true);
+      setLoadingState((prevState) => ({ ...prevState, edit: true }));
       const response = await updateMhs(formData.npm, updatedData);
 
-      if (response.statusCode === 200) {
-        setMsg("Data updated successfully");
-        setMhs(
-          mhs.map((item) => (item.npm === formData.npm ? response.data : item))
-        );
-        setFormData({
-          npm: "",
-          nama: "",
-          kelas: "",
-          no_hp: "",
-          alamat: "",
-          picture: "",
+      if (response && response.statusCode === 200) {
+        Swal.fire({
+          icon: "success",
+          title: "Data Updated Successfully!",
+          text: "The data has been updated successfully.",
+          confirmButtonText: "OK",
+        }).then(() => {
+          setEditModalOpen(false);
+          setLoadingState((prevState) => ({ ...prevState, load: true }));
+          getMhsbyNpm(formData.npm).then((newData) => {
+            setSearchResults([newData.data]);
+            setMhs(
+              mhs.map((item) =>
+                item.npm === formData.npm ? newData.data : item
+              )
+            );
+
+            setLoadingState((prevState) => ({ ...prevState, load: false }));
+            setFormData({
+              npm: "",
+              nama: "",
+              kelas: "",
+              no_hp: "",
+              alamat: "",
+              picture: "",
+              status: "",
+            });
+          });
         });
-        setTimeout(() => setEditModalOpen(false), 2000);
-        setTimeout(() => setMsg(""), 1000);
       } else {
-        setMsg("Failed to update data");
+        Swal.fire({
+          icon: "error",
+          title: "Failed to Update Data",
+          text: response.message || "There was an issue updating the data.",
+          confirmButtonText: "OK",
+        });
       }
-      setLoading(false);
     } catch (error) {
-      setLoading(false);
-      setMsg("Failed to update data");
+      setLoadingState((prevState) => ({ ...prevState, edit: false }));
+      Swal.fire({
+        icon: "error",
+        title: "Failed to Update Data",
+        text: "An unexpected error occurred.",
+        confirmButtonText: "OK",
+      });
       console.error(error);
+    } finally {
+      setLoadingState((prevState) => ({ ...prevState, edit: false }));
     }
   };
 
@@ -177,8 +211,8 @@ const Search = () => {
               <CardMhs key={item.npm} {...item} />
             ))}
           </div>
-        ) : loading ? (
-          <TableMhsLoader />
+        ) : loadingState.load ? (
+          <TableMhsLoaderStatus />
         ) : (
           <TableMhs
             data={searchResults}
@@ -187,7 +221,6 @@ const Search = () => {
           />
         )}
       </div>
-      {/* Modals for Add and Edit */}
 
       <ModalsEdit
         modalOpen={editModalOpen}
@@ -195,7 +228,7 @@ const Search = () => {
         formData={formData}
         setFormData={setFormData}
         handleSubmit={handleSubmitEdit}
-        loading={loading}
+        loading={loadingState.edit}
         msg={msg}
       />
     </div>

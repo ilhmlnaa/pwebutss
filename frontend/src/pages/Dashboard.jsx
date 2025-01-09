@@ -141,7 +141,7 @@ const Dashboard = () => {
 
   const handleSubmitEdit = async (e) => {
     e.preventDefault();
-
+  
     const updatedData = {
       npm: parseInt(formData.npm),
       nama: formData.nama,
@@ -151,37 +151,53 @@ const Dashboard = () => {
       picture: formData.picture,
       status: formData.status,
     };
-
+  
     try {
       setLoadingState((prevState) => ({ ...prevState, edit: true }));
       const response = await updateMhs(formData.npm, updatedData);
-
+  
       if (response.statusCode === 200) {
-        setMsg("Data updated successfully");
-        setMhs(
-          mhs.map((item) => (item.npm === formData.npm ? response.data : item))
-        );
-        setFormData({
-          npm: "",
-          nama: "",
-          kelas: "",
-          no_hp: "",
-          alamat: "",
-          picture: "",
-          status: "",
+        Swal.fire({
+          icon: "success",
+          title: "Data Updated Successfully!",
+          text: "The data has been updated successfully.",
+          confirmButtonText: "OK",
+        }).then(() => {
+          setMhs(
+            mhs.map((item) => (item.npm === formData.npm ? response.data : item))
+          );
+          setFormData({
+            npm: "",
+            nama: "",
+            kelas: "",
+            no_hp: "",
+            alamat: "",
+            picture: "",
+            status: "",
+          });
+          setEditModalOpen(false);
         });
-        setTimeout(() => setEditModalOpen(false), 2000);
-        setTimeout(() => setMsg(""), 1000);
       } else {
-        setMsg("Failed to update data");
+        Swal.fire({
+          icon: "error",
+          title: "Failed to Update Data",
+          text: response.message || "There was an issue updating the data.",
+          confirmButtonText: "OK",
+        });
       }
       setLoadingState((prevState) => ({ ...prevState, edit: false }));
     } catch (error) {
       setLoadingState((prevState) => ({ ...prevState, edit: false }));
-      setMsg("Failed to update data");
+      Swal.fire({
+        icon: "error",
+        title: "Failed to Update Data",
+        text: "An unexpected error occurred.",
+        confirmButtonText: "OK",
+      });
       console.error(error);
     }
   };
+  
 
   const handleDelete = async (npm) => {
     try {

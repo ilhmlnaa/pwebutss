@@ -19,7 +19,7 @@ const Navbar = () => {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
 
-    if (searchQuery.length < 8) {
+    if (searchQuery.length < 8 || searchQuery.length > 8) {
       toast.error("NPM must be 8 digits", {
         position: "top-right",
         autoClose: 1500,
@@ -86,7 +86,7 @@ const Navbar = () => {
         </div>
 
         {/* Search input for larger screens */}
-        <div className="hidden md:block w-1/2">
+        <div className="hidden md:block w-1/3">
           <form onSubmit={handleSearchSubmit}>
             <input
               type="number"

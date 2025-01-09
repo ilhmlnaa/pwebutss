@@ -19,6 +19,17 @@ const TableMhs = ({ data, handleDelete, handleEdit }) => {
     );
   }
 
+  if (data[0].statusCode === 404) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 p-8 w-full">
+        <img src="emot.png" alt="" className="w-44 h-44 absolute" />
+        <p className="relative top-28 left-5 font-bold text-red-400">
+          {data[0].message}
+        </p>
+      </div>
+    );
+  }
+
   const handleDeleteWithConfirmation = (npm) => {
     Swal.fire({
       title: "Are you sure?",
@@ -67,7 +78,7 @@ const TableMhs = ({ data, handleDelete, handleEdit }) => {
                         src={item.picture || "profile.png"}
                         alt={`Foto ${item.nama}`}
                         className="object-cover"
-                        onError={(e) => e.target.src = '/profile.png'}
+                        onError={(e) => (e.target.src = "/profile.png")}
                       />
                     </div>
                   </div>
@@ -77,19 +88,19 @@ const TableMhs = ({ data, handleDelete, handleEdit }) => {
                       Mahasiswa{" "}
                       {item.status === "Aktif" ? (
                         <span className="text-xs text-green-600 relative">
+                          {item.status}
                           <FontAwesomeIcon
                             icon={faCircleDot}
                             className="pulse-icon absolute top-0 left-7 transform -translate-x-1/2"
                           />
-                          {item.status}
                         </span>
                       ) : (
                         <span className="text-xs text-red-600 relative">
+                          {item.status}
                           <FontAwesomeIcon
                             icon={faCircleDot}
                             className="pulse-icon absolute top-0 left-[3.7rem] transform -translate-x-1/2"
                           />
-                          {item.status}
                         </span>
                       )}
                     </div>

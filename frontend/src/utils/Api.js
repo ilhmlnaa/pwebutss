@@ -92,7 +92,7 @@ export const getMhs = async () => {
     return data;
   } catch (error) {
     console.error(error);
-    throw error;
+    return error.response.data;
   }
 };
 

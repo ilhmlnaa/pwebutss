@@ -68,7 +68,7 @@ const ModalsAdd = ({
                 name="no_hp"
                 value={formData.no_hp}
                 onChange={handleChange}
-                className="input input-bordered w-full py-3 px-3 bg-white focus:bg-slate-100 focus:outline-none focus:ring-1" 
+                className="input input-bordered w-full py-3 px-3 bg-white focus:bg-slate-100 focus:outline-none focus:ring-1"
                 required
               />
             </div>

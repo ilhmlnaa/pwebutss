@@ -188,8 +188,8 @@ const LoginRegister = () => {
   };
 
   return (
-    <div className="w-full overflow-auto min-h-screen lg:w-[40%] p-3 lg:p-5 flex flex-col items-center bg-gray-100">
-      <div className="w-full m-2 max-w-md bg-white shadow-lg rounded-lg p-8 ">
+    <div className="w-full overflow-auto min-h-screen lg:w-[35%] p-3 lg:p-5 flex flex-col items-center justify-center bg-gray-100">
+      <div className="w-full m-2 max-w-md bg-white-shadow-lg-rounded-lg p-8 ">
         <div className="flex justify-center mb-6">
           <img src="gundar.png" alt="" className="w-44 h-44 object-cover" />
         </div>
@@ -209,7 +209,7 @@ const LoginRegister = () => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full px-4 py-2 border rounded-md bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-400"
-                placeholder="Enter your Username"
+                placeholder="Enter your username"
                 required
               />
             </div>
@@ -362,8 +362,8 @@ const LoginRegister = () => {
         </div>
       </div>
       <div className="w-full m-2 max-w-md bg-white shadow-lg rounded-lg p-8 ">
-        <div className="bg-yellow-100 p-3 rounded-lg font-bold">
-          <h2 className="text-yellow-600 text-center">Default Account</h2>
+        <div className="bg-[#FFF2D0] p-3 rounded-lg font-bold">
+          <h2 className="text-[#AD7903] text-center">Default Account</h2>
           <div className="text-yellow-500 mt-3">
             <p className="text-center">username: admin</p>
             <p className="text-center">password: admin</p>
