@@ -91,7 +91,6 @@ export const getMhs = async () => {
     const data = response.data;
     return data;
   } catch (error) {
-    console.error(error);
     return error.response.data;
   }
 };

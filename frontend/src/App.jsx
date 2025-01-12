@@ -7,13 +7,13 @@ import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Search from "./pages/Search";
 import NotFound from "./components/NotFound";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Auth />} />
-
         <Route
           path="/dashboard"
           element={

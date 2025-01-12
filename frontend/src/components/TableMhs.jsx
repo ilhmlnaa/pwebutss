@@ -6,6 +6,7 @@ import {
   faCircleDot,
 } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
+import formatDate from "../utils/formatDate";
 
 const TableMhs = ({ data, handleDelete, handleEdit }) => {
   if (data.length === 0) {
@@ -60,6 +61,7 @@ const TableMhs = ({ data, handleDelete, handleEdit }) => {
             <th>Kelas</th>
             <th>No HP</th>
             <th>Alamat</th>
+            <th>Date Added</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -112,6 +114,9 @@ const TableMhs = ({ data, handleDelete, handleEdit }) => {
               <td>{item.kelas}</td>
               <td>{item.no_hp}</td>
               <td>{item.alamat}</td>
+              <td>
+                <p className="">{formatDate(item.createdAt)}</p>
+              </td>
 
               <td>
                 <div className="flex gap-2">

@@ -9,6 +9,7 @@ import TableMhs from "../components/TableMhs";
 import ModalsEdit from "../components/ModalEdit";
 import { TableMhsLoaderStatus } from "../components/SkeletonLoader";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 import Swal from "sweetalert2";
 
 const Search = () => {
@@ -38,6 +39,7 @@ const Search = () => {
 
   useEffect(() => {
     if (npmQuery) {
+      setLoadingState((prevState) => ({ ...prevState, load: true }));
       getMhsbyNpm(npmQuery)
         .then((response) => {
           if (response.data) {
@@ -50,8 +52,8 @@ const Search = () => {
         })
         .catch((error) => {
           console.error(error);
-          setLoadingState((prevState) => ({ ...prevState, load: false }));
           setSearchResults([error.response.data]);
+          setLoadingState((prevState) => ({ ...prevState, load: false }));
         });
     }
   }, [npmQuery]);
@@ -158,6 +160,7 @@ const Search = () => {
 
   return (
     <div className="w-full p-5 mt-10">
+      <ToastContainer />
       <h1 className="font-extrabold text-center text-2xl text-slate-400 mb-14">
         Search Results for NPM: {npmQuery}
       </h1>

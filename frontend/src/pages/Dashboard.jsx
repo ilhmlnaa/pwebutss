@@ -8,6 +8,7 @@ import ModalsAdd from "../components/ModalAdd";
 import ModalsEdit from "../components/ModalEdit";
 import { TableMhsLoader } from "../components/SkeletonLoader";
 import { ToastContainer, toast } from "react-toastify";
+import printData from "../utils/PrintData";
 import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
 
@@ -41,9 +42,9 @@ const Dashboard = () => {
           setLoadingState((prevState) => ({ ...prevState, load: false }));
 
           if (response.data.statusCode === 404 || response.data.length === 0) {
-            toast.error("Api Server Error", {
+            toast.error("Api Server Error: Data not found", {
               position: "top-right",
-              autoClose: false,
+              autoClose: 5000,
               hideProgressBar: false,
               closeOnClick: true,
               pauseOnHover: true,
@@ -51,14 +52,24 @@ const Dashboard = () => {
               toastId: "apiError404Toast",
             });
           }
+        } else {
+          setLoadingState((prevState) => ({ ...prevState, load: false }));
+          toast.error("Api Server Error: Api Url invalid", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            toastId: "apiErrorNoDataToast",
+          });
         }
       })
       .catch((err) => {
-        console.error(err);
         setLoadingState((prevState) => ({ ...prevState, load: false }));
-        toast.error("Api Server Error", {
+        toast.error("Api Server Error: Unable to reach server", {
           position: "top-right",
-          autoClose: false,
+          autoClose: 5000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -92,7 +103,6 @@ const Dashboard = () => {
       setLoadingState((prevState) => ({ ...prevState, add: true }));
       const response = await createMhs(newData);
       if (response && response.message) {
-        
         if (response.statusCode === 201) {
           Swal.fire({
             icon: "success",
@@ -141,7 +151,7 @@ const Dashboard = () => {
 
   const handleSubmitEdit = async (e) => {
     e.preventDefault();
-  
+
     const updatedData = {
       npm: parseInt(formData.npm),
       nama: formData.nama,
@@ -151,11 +161,11 @@ const Dashboard = () => {
       picture: formData.picture,
       status: formData.status,
     };
-  
+
     try {
       setLoadingState((prevState) => ({ ...prevState, edit: true }));
       const response = await updateMhs(formData.npm, updatedData);
-  
+
       if (response.statusCode === 200) {
         Swal.fire({
           icon: "success",
@@ -164,7 +174,9 @@ const Dashboard = () => {
           confirmButtonText: "OK",
         }).then(() => {
           setMhs(
-            mhs.map((item) => (item.npm === formData.npm ? response.data : item))
+            mhs.map((item) =>
+              item.npm === formData.npm ? response.data : item
+            )
           );
           setFormData({
             npm: "",
@@ -197,7 +209,6 @@ const Dashboard = () => {
       console.error(error);
     }
   };
-  
 
   const handleDelete = async (npm) => {
     try {
@@ -221,15 +232,6 @@ const Dashboard = () => {
     setEditModalOpen(true);
   };
 
-  const printData = () => {
-    const printContent = document.getElementById("printable");
-    const printWindow = window.open("", "", "height=650,width=900");
-    printWindow.document.write("<html><head><title>Print</title></head><body>");
-    printWindow.document.write(printContent.innerHTML);
-    printWindow.document.write("</body></html>");
-    printWindow.document.close();
-    printWindow.print();
-  };
 
   // if (loading) {
   //   return (
